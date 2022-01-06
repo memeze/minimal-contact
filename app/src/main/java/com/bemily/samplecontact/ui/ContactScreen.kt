@@ -1,19 +1,18 @@
 package com.bemily.samplecontact.ui
 
 import android.Manifest
+import android.content.Context
 import android.content.res.Configuration
+import android.provider.ContactsContract
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,8 +31,6 @@ import com.google.accompanist.permissions.rememberPermissionState
 fun ContactScreen(modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
     val contactPermissionState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
-    var doNotShowRationale by rememberSaveable { mutableStateOf(false) }
-    val contactList: List<Contact> = Contact.getMockContactList()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -64,6 +61,7 @@ fun ContactScreen(modifier: Modifier = Modifier) {
             },
             permissionNotAvailableContent = { /* TODO */ },
             content = {
+                val contactList = getContacts(LocalContext.current)
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth(),
                     state = lazyListState
@@ -105,6 +103,32 @@ fun ContactItem(
             color = MaterialTheme.colors.onSurface.copy(alpha = .5f)
         )
     }
+}
+
+fun getContacts(context: Context): List<Contact> {
+    val contacts = mutableListOf<Contact>()
+    val projection = arrayOf(
+        ContactsContract.Contacts._ID,
+        ContactsContract.Contacts.DISPLAY_NAME
+    )
+    val sortOrder = "${ContactsContract.Contacts.DISPLAY_NAME} ASC"
+
+    context.contentResolver.query(
+        ContactsContract.Contacts.CONTENT_URI,
+        projection,
+        null,
+        null,
+        sortOrder
+    )?.use { cursor ->
+        while (cursor.moveToNext()) {
+            val id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID))
+            val name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+
+            contacts.add(Contact(id = id, name = name, phoneNumber = ""))
+        }
+    }
+
+    return contacts
 }
 
 @Preview("light theme", uiMode = Configuration.UI_MODE_NIGHT_NO)
