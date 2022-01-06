@@ -1,15 +1,18 @@
 package com.bemily.samplecontact.ui
 
+import android.Manifest
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,10 +23,16 @@ import com.bemily.samplecontact.data.model.Contact
 import com.bemily.samplecontact.ui.component.SurfaceTopAppBar
 import com.bemily.samplecontact.ui.theme.SampleContactTheme
 import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionRequired
+import com.google.accompanist.permissions.rememberPermissionState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ContactScreen(modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
+    val contactPermissionState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
+    var doNotShowRationale by rememberSaveable { mutableStateOf(false) }
     val contactList: List<Contact> = Contact.getMockContactList()
 
     Scaffold(
@@ -41,20 +50,37 @@ fun ContactScreen(modifier: Modifier = Modifier) {
             )
         }
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            state = lazyListState
-        ) {
-            items(contactList) { item ->
-                ContactItem(
-                    name = item.name,
-                    phoneNumber = item.phoneNumber
-                )
+        PermissionRequired(
+            permissionState = contactPermissionState,
+            permissionNotGrantedContent = {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Button(onClick = { contactPermissionState.launchPermissionRequest() }) {
+                        Text(text = "Request Permission")
+                    }
+                }
+            },
+            permissionNotAvailableContent = { /* TODO */ },
+            content = {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = lazyListState
+                ) {
+                    items(contactList) { item ->
+                        ContactItem(
+                            name = item.name,
+                            phoneNumber = item.phoneNumber
+                        )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.navigationBarsPadding())
+                    }
+                }
+
             }
-            item {
-                Spacer(modifier = Modifier.navigationBarsPadding())
-            }
-        }
+        )
     }
 }
 
