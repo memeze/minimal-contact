@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Contact</string>
+    <string name="contact_item_phone_number_count">%1$s and %2$s others</string>
 </resources>

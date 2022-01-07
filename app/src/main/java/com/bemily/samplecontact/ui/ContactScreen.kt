@@ -1,9 +1,7 @@
 package com.bemily.samplecontact.ui
 
 import android.Manifest
-import android.content.Context
 import android.content.res.Configuration
-import android.provider.ContactsContract
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,9 +16,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bemily.samplecontact.R
-import com.bemily.samplecontact.data.model.Contact
 import com.bemily.samplecontact.ui.component.SurfaceTopAppBar
 import com.bemily.samplecontact.ui.theme.SampleContactTheme
+import com.bemily.samplecontact.util.ContactHelper
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
@@ -61,7 +59,7 @@ fun ContactScreen(modifier: Modifier = Modifier) {
             },
             permissionNotAvailableContent = { /* TODO */ },
             content = {
-                val contactList = getContacts(LocalContext.current)
+                val contactList = ContactHelper(LocalContext.current).getContacts()
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth(),
                     state = lazyListState
@@ -69,8 +67,9 @@ fun ContactScreen(modifier: Modifier = Modifier) {
                     items(contactList) { item ->
                         ContactItem(
                             name = item.name,
-                            phoneNumber = item.phoneNumber
+                            phoneNumbers = item.phoneNumbers
                         )
+                        Divider()
                     }
                     item {
                         Spacer(modifier = Modifier.navigationBarsPadding())
@@ -85,7 +84,7 @@ fun ContactScreen(modifier: Modifier = Modifier) {
 @Composable
 fun ContactItem(
     name: String = "",
-    phoneNumber: String = ""
+    phoneNumbers: List<String> = listOf()
 ) {
     Column(
         modifier = Modifier
@@ -98,37 +97,14 @@ fun ContactItem(
             color = MaterialTheme.colors.onSurface
         )
         Text(
-            text = phoneNumber,
+            text = when (phoneNumbers.size == 1) {
+                true -> phoneNumbers.first()
+                else -> stringResource(R.string.contact_item_phone_number_count, phoneNumbers.first(), phoneNumbers.size - 1)
+            },
             style = MaterialTheme.typography.subtitle1,
             color = MaterialTheme.colors.onSurface.copy(alpha = .5f)
         )
     }
-}
-
-fun getContacts(context: Context): List<Contact> {
-    val contacts = mutableListOf<Contact>()
-    val projection = arrayOf(
-        ContactsContract.Contacts._ID,
-        ContactsContract.Contacts.DISPLAY_NAME
-    )
-    val sortOrder = "${ContactsContract.Contacts.DISPLAY_NAME} ASC"
-
-    context.contentResolver.query(
-        ContactsContract.Contacts.CONTENT_URI,
-        projection,
-        null,
-        null,
-        sortOrder
-    )?.use { cursor ->
-        while (cursor.moveToNext()) {
-            val id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID))
-            val name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-
-            contacts.add(Contact(id = id, name = name, phoneNumber = ""))
-        }
-    }
-
-    return contacts
 }
 
 @Preview("light theme", uiMode = Configuration.UI_MODE_NIGHT_NO)
