@@ -1,10 +1,10 @@
 package com.bemily.samplecontact.util
 
 import android.content.Context
-import android.provider.ContactsContract.*
+import android.provider.ContactsContract.CommonDataKinds
+import android.provider.ContactsContract.Data
 import android.util.Log
 import android.util.SparseArray
-import androidx.core.util.forEach
 import com.bemily.samplecontact.data.model.Contact
 
 class ContactHelper(private val context: Context) {
@@ -15,7 +15,7 @@ class ContactHelper(private val context: Context) {
         val projection = getContactProjection()
         val selection = null
         val selectionArgs = null
-        val sortOrder = "${Contacts.DISPLAY_NAME} ASC"
+        val sortOrder = "${CommonDataKinds.Phone.DISPLAY_NAME} ASC"
 
         try {
             context.contentResolver.query(uri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
@@ -38,18 +38,15 @@ class ContactHelper(private val context: Context) {
         val phoneNumbers = getPhoneNumbers()
         for (i in 0 until phoneNumbers.size()) {
             val key = phoneNumbers.keyAt(i)
-            if (contacts[key] != null) {
-                val numbers = phoneNumbers.valueAt(i)
-                contacts[key].phoneNumbers = numbers
-            }
+            contacts[key]?.phoneNumbers = phoneNumbers.valueAt(i)
         }
 
-        val result = mutableListOf<Contact>()
-        contacts.forEach { key, value ->
-            result.add(value)
+        val result = ArrayList<Contact>(contacts.size())
+        (0 until contacts.size()).mapTo(result) {
+            contacts.valueAt(it)
         }
 
-        return result
+        return result.sortedBy { contact -> contact.name }
     }
 
     private fun getPhoneNumbers(): SparseArray<ArrayList<String>> {
