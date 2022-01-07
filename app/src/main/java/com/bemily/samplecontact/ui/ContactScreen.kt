@@ -29,12 +29,18 @@ import com.google.accompanist.permissions.rememberPermissionState
 fun ContactScreen(modifier: Modifier = Modifier) {
     val lazyListState = rememberLazyListState()
     val contactPermissionState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
+    val contactList = ContactHelper(LocalContext.current).getContacts()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             SurfaceTopAppBar(
-                title = { Text(text = stringResource(R.string.app_name)) },
+                title = {
+                    Row {
+                        Text(text = stringResource(R.string.app_name))
+                        Text(text = " (${contactList.size})")
+                    }
+                },
                 navigationIcon = {
                     Icon(
                         painter = painterResource(R.drawable.ic_launcher_foreground),
@@ -59,7 +65,6 @@ fun ContactScreen(modifier: Modifier = Modifier) {
             },
             permissionNotAvailableContent = { /* TODO */ },
             content = {
-                val contactList = ContactHelper(LocalContext.current).getContacts()
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth(),
                     state = lazyListState
