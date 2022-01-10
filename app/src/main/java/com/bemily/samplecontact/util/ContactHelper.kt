@@ -11,7 +11,7 @@ class ContactHelper(private val context: Context) {
     fun getContacts(): List<Contact> {
         val contacts = SparseArray<Contact>()
 
-        val uri = Data.CONTENT_URI
+        val uri = CommonDataKinds.Phone.CONTENT_URI
         val projection = getContactProjection()
         val selection = null
         val selectionArgs = null
