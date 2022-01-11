@@ -104,8 +104,9 @@ fun ContactItem(
             color = MaterialTheme.colors.onSurface
         )
         Text(
-            text = when (phoneNumbers.size == 1) {
-                true -> phoneNumbers.first()
+            text = when (phoneNumbers.size) {
+                0 -> ""
+                1 -> phoneNumbers.first()
                 else -> stringResource(R.string.contact_item_phone_number_count, phoneNumbers.first(), phoneNumbers.size - 1)
             },
             style = MaterialTheme.typography.subtitle1,
