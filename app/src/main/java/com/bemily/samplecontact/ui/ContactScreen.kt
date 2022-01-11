@@ -9,9 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,8 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bemily.samplecontact.R
-import com.bemily.samplecontact.data.model.Contact
-import com.bemily.samplecontact.data.model.Result
 import com.bemily.samplecontact.ui.component.SurfaceTopAppBar
 import com.bemily.samplecontact.ui.theme.SampleContactTheme
 import com.google.accompanist.insets.navigationBarsPadding
@@ -39,16 +35,7 @@ fun ContactScreen(
     val lazyListState = rememberLazyListState()
     val contactPermissionState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
 
-    val contactState = viewModel.contactState.collectAsState().value
-    val contactList = remember { mutableListOf<Contact>() }
-
-    LaunchedEffect(contactState) {
-        when (contactState) {
-            is Result.Success -> contactList.addAll(contactState.data)
-            is Result.Loading -> Unit
-            is Result.Error -> Unit
-        }
-    }
+    val contactList = viewModel.contactList.collectAsState().value
 
     Scaffold(
         modifier = modifier.fillMaxSize(),

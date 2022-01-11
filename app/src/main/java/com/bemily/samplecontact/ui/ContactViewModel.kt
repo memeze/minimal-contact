@@ -1,5 +1,6 @@
 package com.bemily.samplecontact.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bemily.samplecontact.data.model.Contact
@@ -17,6 +18,9 @@ class ContactViewModel @Inject constructor(
     private val contactHelper: ContactHelper
 ) : ViewModel() {
 
+    private val _contactList = MutableStateFlow<List<Contact>>(emptyList())
+    var contactList = _contactList
+
     private val _contactState = MutableStateFlow<Result<List<Contact>>>(Result.Success(emptyList()))
     var contactState = _contactState
 
@@ -27,7 +31,12 @@ class ContactViewModel @Inject constructor(
     private fun getContacts() {
         viewModelScope.launch(Dispatchers.IO) {
             contactHelper.fetchContacts().collect { result ->
-                _contactState.value = result
+                Log.e(":::::ContactViewModel", "result == $result")
+                when (result) {
+                    is Result.Success -> _contactList.value = result.data
+                    is Result.Loading -> Unit
+                    is Result.Error -> Unit
+                }
             }
         }
     }
