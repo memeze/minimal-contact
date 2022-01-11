@@ -1,87 +1,80 @@
 package com.bemily.samplecontact.util
 
 import android.content.Context
-import android.provider.ContactsContract.CommonDataKinds
+import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.provider.ContactsContract.Data
 import android.util.Log
-import android.util.SparseArray
 import com.bemily.samplecontact.data.model.Contact
+import com.bemily.samplecontact.data.model.Result
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ContactHelper(private val context: Context) {
-    fun getContacts(): List<Contact> {
-        val contacts = SparseArray<Contact>()
+@Singleton
+class ContactHelper @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
+    fun fetchContacts(): Flow<Result<List<Contact>>> {
+        return flow {
+            try {
+                emit(Result.Loading)
+                emit(Result.Success(getContacts()))
+            } catch (e: Exception) {
+                emit(Result.Error(e))
+            }
+        }
+    }
 
-        val uri = CommonDataKinds.Phone.CONTENT_URI
+    /**
+     * 현재 Phone number 기준으로 가져오기 때문에,
+     * 같은 연락처의 여러 전화번호가 다른 item 으로 return 됩니다.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun getContacts(): MutableList<Contact> {
+        Log.d(TAG, "getContacts: ")
+        val contactList = mutableListOf<Contact>()
+
+        val uri = Phone.CONTENT_URI
         val projection = getContactProjection()
         val selection = null
         val selectionArgs = null
-        val sortOrder = "${CommonDataKinds.Phone.DISPLAY_NAME} ASC"
+        val sortOrder = "${Phone.DISPLAY_NAME} ASC"
 
         try {
             context.contentResolver.query(uri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                 while (cursor.moveToNext()) {
                     val idIndex = cursor.getColumnIndex(Data.RAW_CONTACT_ID)
-                    val nameIndex = cursor.getColumnIndex(CommonDataKinds.Phone.DISPLAY_NAME)
+                    val nameIndex = cursor.getColumnIndex(Phone.DISPLAY_NAME)
+                    val numberIndex = cursor.getColumnIndex(Phone.NUMBER)
 
                     val id = cursor.getInt(idIndex)
                     val name = cursor.getString(nameIndex)
-                    val phoneNumbers = listOf<String>()
-                    val contact = Contact(id, name, phoneNumbers)
+                    val phoneNumber = cursor.getString(numberIndex)
 
-                    contacts.put(id, contact)
+                    val contact = Contact(id, name, phoneNumber)
+                    contactList.add(contact)
                 }
+
+                cursor.close()
             }
         } catch (e: Exception) {
-            Log.e("CONTACT", "getContacts : $e")
+            Log.e(TAG, "getContacts : $e")
         }
 
-        val phoneNumbers = getPhoneNumbers()
-        for (i in 0 until phoneNumbers.size()) {
-            val key = phoneNumbers.keyAt(i)
-            contacts[key]?.phoneNumbers = phoneNumbers.valueAt(i)
-        }
-
-        val result = ArrayList<Contact>(contacts.size())
-        (0 until contacts.size()).mapTo(result) {
-            contacts.valueAt(it)
-        }
-
-        return result.sortedBy { contact -> contact.name }
+        return contactList
     }
 
-    private fun getPhoneNumbers(): SparseArray<ArrayList<String>> {
-        val phoneNumbers = SparseArray<ArrayList<String>>()
-        val uri = CommonDataKinds.Phone.CONTENT_URI
-        val projection = getPhoneNumberProjection()
-        try {
-            context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    val idIndex = cursor.getColumnIndex(Data.RAW_CONTACT_ID)
-                    val id = cursor.getInt(idIndex)
+    private fun getContactProjection() = arrayOf(
+        Data.RAW_CONTACT_ID,
+        Phone.DISPLAY_NAME,
+        Phone.NUMBER
+    )
 
-                    val phoneNumberIndex = cursor.getColumnIndex(CommonDataKinds.Phone.NUMBER)
-                    val phoneNumber = cursor.getString(phoneNumberIndex)
-
-                    if (phoneNumbers[id] == null) {
-                        phoneNumbers.put(id, ArrayList())
-                    }
-                    phoneNumbers[id].add(phoneNumber)
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("CONTACT", "getPhoneNumbers : $e")
-        }
-
-        return phoneNumbers
+    companion object {
+        private const val TAG = "ContactHelper"
+        private const val PAGING_COUNT = 100
     }
-
-    fun getContactProjection() = arrayOf(
-        Data.RAW_CONTACT_ID,
-        CommonDataKinds.Phone.DISPLAY_NAME
-    )
-
-    fun getPhoneNumberProjection() = arrayOf(
-        Data.RAW_CONTACT_ID,
-        CommonDataKinds.Phone.NUMBER
-    )
 }
