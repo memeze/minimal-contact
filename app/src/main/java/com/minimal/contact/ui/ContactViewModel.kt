@@ -1,11 +1,11 @@
-package com.bemily.samplecontact.ui
+package com.minimal.contact.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bemily.samplecontact.data.datastore.DataStoreHelper
-import com.bemily.samplecontact.data.model.Contact
-import com.bemily.samplecontact.data.model.Result
-import com.bemily.samplecontact.util.ContactHelper
+import com.minimal.contact.util.ContactHelper
+import com.minimal.contact.data.datastore.DataStoreHelper
+import com.minimal.contact.data.model.Contact
+import com.minimal.contact.data.model.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

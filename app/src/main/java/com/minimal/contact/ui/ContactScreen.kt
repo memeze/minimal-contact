@@ -1,4 +1,4 @@
-package com.bemily.samplecontact.ui
+package com.minimal.contact.ui
 
 import android.Manifest
 import android.content.res.Configuration
@@ -18,13 +18,13 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bemily.samplecontact.R
-import com.bemily.samplecontact.ui.component.SurfaceTopAppBar
-import com.bemily.samplecontact.ui.theme.SampleContactTheme
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.rememberPermissionState
+import com.minimal.contact.R
+import com.minimal.contact.ui.component.SurfaceTopAppBar
+import com.minimal.contact.ui.theme.MinimalContactTheme
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -123,7 +123,7 @@ fun ContactItem(
 @Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ContactAppPreview() {
-    SampleContactTheme {
+    MinimalContactTheme {
         ContactScreen()
     }
 }

@@ -1,4 +1,4 @@
-package com.bemily.samplecontact.ui.component
+package com.minimal.contact.ui.component
 
 import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar

@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bemily.samplecontact">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.minimal.contact">
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
-        android:name=".ContactApp"
+        android:name="com.minimal.contact.MinimalContact"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SampleContact">
+        android:theme="@style/Theme.MinimalContact"
+        tools:ignore="AllowBackup">
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.SampleContact.NoActionBar">
+            android:theme="@style/Theme.MinimalContact.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

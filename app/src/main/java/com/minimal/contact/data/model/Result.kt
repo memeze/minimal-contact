@@ -1,4 +1,4 @@
-package com.bemily.samplecontact.data.model
+package com.minimal.contact.data.model
 
 sealed class Result<out R> {
     data class Success<out T>(val data: T) : Result<T>()

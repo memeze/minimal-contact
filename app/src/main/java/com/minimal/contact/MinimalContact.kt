@@ -1,7 +1,7 @@
-package com.bemily.samplecontact
+package com.minimal.contact
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class ContactApp : Application()
+class MinimalContact : Application()

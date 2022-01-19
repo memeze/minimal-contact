@@ -1,4 +1,4 @@
-package com.bemily.samplecontact.data.datastore
+package com.minimal.contact.data.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.bemily.samplecontact.data.datastore.DataStoreHelper.Companion.DATA_STORE_NAME
-import com.bemily.samplecontact.data.datastore.DataStoreHelper.PreferencesKeys.CONTACT_LAST_UPDATE_TIME
+import com.minimal.contact.data.datastore.DataStoreHelper.Companion.DATA_STORE_NAME
+import com.minimal.contact.data.datastore.DataStoreHelper.PreferencesKeys.CONTACT_LAST_UPDATE_TIME
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

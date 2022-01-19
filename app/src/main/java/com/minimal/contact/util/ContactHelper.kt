@@ -1,12 +1,11 @@
-package com.bemily.samplecontact.util
+package com.minimal.contact.util
 
 import android.content.Context
 import android.provider.ContactsContract
 import android.provider.ContactsContract.CommonDataKinds.Phone
-import android.provider.ContactsContract.Data
 import android.util.Log
-import com.bemily.samplecontact.data.model.Contact
-import com.bemily.samplecontact.data.model.Result
+import com.minimal.contact.data.model.Contact
+import com.minimal.contact.data.model.Result
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

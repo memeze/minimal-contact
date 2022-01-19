@@ -1,4 +1,4 @@
-package com.bemily.samplecontact.ui.theme
+package com.minimal.contact.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

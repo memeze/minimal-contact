@@ -1,12 +1,12 @@
-package com.bemily.samplecontact.ui
+package com.minimal.contact.ui
 
 
 import androidx.compose.runtime.Composable
-import com.bemily.samplecontact.ui.theme.SampleContactTheme
+import com.minimal.contact.ui.theme.MinimalContactTheme
 
 @Composable
 fun ContactApp() {
-    SampleContactTheme {
+    MinimalContactTheme {
         SystemUi {
             ContactScreen()
         }

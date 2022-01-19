@@ -1,4 +1,4 @@
-package com.bemily.samplecontact.ui
+package com.minimal.contact.ui
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable

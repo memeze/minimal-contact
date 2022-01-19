@@ -1,4 +1,4 @@
-package com.bemily.samplecontact.data.model
+package com.minimal.contact.data.model
 
 data class Contact(
     val id: Int,
