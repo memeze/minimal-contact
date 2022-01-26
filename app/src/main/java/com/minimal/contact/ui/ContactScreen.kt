@@ -34,17 +34,21 @@ fun ContactScreen(
 ) {
     val lazyListState = rememberLazyListState()
     val contactPermissionState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
-
-    val contactList = viewModel.contactList.collectAsState().value
+    val contactState = viewModel.contactState.collectAsState().value
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             SurfaceTopAppBar(
                 title = {
-                    Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(text = stringResource(R.string.app_name))
-                        Text(text = " (${contactList.size})")
+                        Spacer(modifier = Modifier.size(10.dp))
+                        when (contactState) {
+                            is ContactState.Loading -> CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                            is ContactState.Loaded -> Text(text = "(${contactState.contacts.size})")
+                            else -> Unit
+                        }
                     }
                 },
                 navigationIcon = {
@@ -71,21 +75,29 @@ fun ContactScreen(
             },
             permissionNotAvailableContent = { /* TODO */ },
             content = {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = lazyListState
-                ) {
-                    items(contactList) { item ->
-                        ContactItem(
-                            name = item.name,
-                            phoneNumbers = listOf(PhoneNumberUtils.formatNumber(item.phoneNumber, Locale.current.region))
-                        )
-                        Divider()
-                    }
-                    item {
-                        Spacer(modifier = Modifier.navigationBarsPadding())
+                when (contactState) {
+                    is ContactState.Pending -> Unit
+                    is ContactState.Loading -> Unit
+                    is ContactState.Loaded -> {
+                        val contactList = contactState.contacts
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                            state = lazyListState
+                        ) {
+                            items(contactList) { contact ->
+                                ContactItem(
+                                    name = contact.displayName.orEmpty().ifEmpty { stringResource(R.string.contact_item_anonymous) },
+                                    phoneNumbers = listOf(PhoneNumberUtils.formatNumber(contact.phoneNumber, Locale.current.region))
+                                )
+                                Divider()
+                            }
+                            item {
+                                Spacer(modifier = Modifier.navigationBarsPadding())
+                            }
+                        }
                     }
                 }
+
 
             }
         )
