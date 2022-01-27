@@ -90,7 +90,9 @@ fun ContactScreen(
                             items(contactList) { contact ->
                                 ContactItem(
                                     name = contact.displayName.orEmpty().ifEmpty { stringResource(R.string.contact_item_anonymous) },
-                                    phoneNumbers = listOf(PhoneNumberUtils.formatNumber(contact.phoneNumber, Locale.current.region))
+                                    phoneNumbers = contact.phones.map { phone ->
+                                        PhoneNumberUtils.formatNumber(phone.number, Locale.current.region)
+                                    }
                                 )
                                 Divider()
                             }
@@ -100,8 +102,6 @@ fun ContactScreen(
                         }
                     }
                 }
-
-
             }
         )
     }
@@ -122,15 +122,16 @@ fun ContactItem(
             style = MaterialTheme.typography.h5,
             color = MaterialTheme.colors.onSurface
         )
-        Text(
-            text = when (phoneNumbers.size) {
-                0 -> ""
-                1 -> phoneNumbers.first()
-                else -> stringResource(R.string.contact_item_phone_number_count, phoneNumbers.first(), phoneNumbers.size - 1)
-            },
-            style = MaterialTheme.typography.subtitle1,
-            color = MaterialTheme.colors.onSurface.copy(alpha = .5f)
-        )
+        if (phoneNumbers.isNotEmpty()) {
+            Text(
+                text = when (phoneNumbers.size) {
+                    1 -> phoneNumbers.first()
+                    else -> stringResource(R.string.contact_item_phone_number_count, phoneNumbers.first(), phoneNumbers.size - 1)
+                },
+                style = MaterialTheme.typography.subtitle1,
+                color = MaterialTheme.colors.onSurface.copy(alpha = .5f)
+            )
+        }
     }
 }
 

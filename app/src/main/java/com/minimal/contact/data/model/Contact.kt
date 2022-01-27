@@ -4,5 +4,10 @@ data class Contact(
     val id: Long,
     val lookupKey: String?,
     val displayName: String?,
-    var phoneNumber: String
+    var phones: List<Phone> = listOf()
+)
+
+data class Phone(
+    val id: Long,
+    val number: String
 )

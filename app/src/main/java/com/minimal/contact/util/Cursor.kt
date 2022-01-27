@@ -31,3 +31,8 @@ internal fun <T> Cursor?.mapEachRow(mapping: (Cursor) -> T): List<T> {
         }
     } ?: emptyList()
 }
+
+internal operator fun Cursor.get(column: String): String {
+    val columnIndex = getColumnIndexOrThrow(column)
+    return getString(columnIndex) ?: ""
+}

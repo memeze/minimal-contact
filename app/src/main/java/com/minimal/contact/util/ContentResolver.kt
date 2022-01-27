@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 
 
-internal fun ContentResolver.query(
+internal fun ContentResolver.runQuery(
     uri: Uri,
     projection: Array<String>? = null,
     selection: String? = null,
@@ -24,7 +24,7 @@ internal fun ContentResolver.query(
     return query(uri, projection, selection, selectionArgs, sortOrder)
 }
 
-internal fun ContentResolver.queryFlow(
+internal fun ContentResolver.runQueryFlow(
     uri: Uri,
     projection: Array<String>? = null,
     selection: String? = null,
