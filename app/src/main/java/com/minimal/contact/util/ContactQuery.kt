@@ -30,7 +30,7 @@ class ContactQuery {
 
                 contentResolver.runQuery(
                     uri = Data.CONTENT_URI,
-                    selection = "${Data.CONTACT_ID} = ${contact.id} AND (${Data.MIMETYPE} IN ?)",
+                    selection = "${Data.CONTACT_ID} = ${contact.id} AND (${Data.MIMETYPE} IN (?))",
                     selectionArgs = arrayOf(Phone.CONTENT_ITEM_TYPE)
                 ).iterate { cursor ->
                     phones = getPhoneNumbers(cursor)
